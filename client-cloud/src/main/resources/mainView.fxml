@@ -1,41 +1,41 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.*?>
-<?import javafx.scene.layout.AnchorPane?>
-<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/10.0.2-internal"
-            xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.zvv.client.gui.MainController">
+<?import javafx.scene.layout.*?>
+
+<AnchorPane fx:id="anchorPane" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.zvv.client.gui.MainController">
     <MenuBar prefHeight="25.0" prefWidth="600.0">
         <Menu mnemonicParsing="false" text="File">
 
-            <MenuItem mnemonicParsing="false" text="Close"/>
+            <MenuItem mnemonicParsing="false" text="Close" />
 
         </Menu>
         <Menu mnemonicParsing="false" text="Edit">
 
-            <MenuItem mnemonicParsing="false" text="Delete"/>
+            <MenuItem mnemonicParsing="false" text="Delete" />
 
         </Menu>
         <Menu mnemonicParsing="false" text="Settings">
 
-            <MenuItem mnemonicParsing="false" text="Action 1"/>
+            <MenuItem mnemonicParsing="false" text="Action 1" />
 
         </Menu>
         <Menu mnemonicParsing="false" text="Help">
 
-            <MenuItem mnemonicParsing="false" text="About"/>
+            <MenuItem mnemonicParsing="false" text="About" />
 
         </Menu>
 
     </MenuBar>
     <ToolBar layoutX="1.0" layoutY="25.0" prefHeight="37.0" prefWidth="600.0">
 
-        <Button mnemonicParsing="false" prefHeight="25.0" prefWidth="62.0" text="Upload"/>
-        <Button mnemonicParsing="false" text="Download"/>
-        <Button mnemonicParsing="false" text="Refresh"/>
+        <Button mnemonicParsing="false" prefHeight="25.0" prefWidth="62.0" text="Upload" />
+        <Button mnemonicParsing="false" text="Download" />
+        <Button fx:id="btnRefresh" mnemonicParsing="false" onAction="#refreshTreeAction" text="Refresh" />
 
     </ToolBar>
-    <Separator layoutX="446.0" layoutY="381.0" orientation="VERTICAL" prefHeight="37.0" prefWidth="5.0"/>
-    <TreeView layoutY="62.0" prefHeight="323.0" prefWidth="601.0"/>
-    <ProgressBar layoutX="458.0" layoutY="392.0" prefHeight="18.0" prefWidth="132.0" progress="0.0"/>
-    <Label fx:id="lblStatus" layoutX="14.0" layoutY="392.0" prefHeight="17.0" prefWidth="424.0"/>
+    <Separator layoutX="446.0" layoutY="381.0" orientation="VERTICAL" prefHeight="37.0" prefWidth="5.0" />
+    <TreeView fx:id="fileTreeView" layoutY="62.0" prefHeight="323.0" prefWidth="601.0" />
+    <ProgressBar layoutX="458.0" layoutY="392.0" prefHeight="18.0" prefWidth="132.0" progress="0.0" />
+    <Label fx:id="lblStatus" layoutX="14.0" layoutY="392.0" prefHeight="17.0" prefWidth="424.0" />
 </AnchorPane>

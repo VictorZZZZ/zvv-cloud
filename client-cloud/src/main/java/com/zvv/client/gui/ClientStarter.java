@@ -27,6 +27,7 @@ public class ClientStarter extends Application {
         nettyClient = new NettyClient(loginController, mainController);
         loginController.setNettyClient(nettyClient);
         loginController.setMainView(mainView);
+        loginController.setMainController(mainController);
         mainController.setNettyClient(nettyClient);
 
         Thread t = new Thread(nettyClient);

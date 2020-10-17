@@ -3,7 +3,11 @@ package core.coders;
 import core.auth.User;
 import core.messsages.AbstractMessage;
 import core.messsages.MessageTypes;
+import core.messsages.Serializer;
+import core.messsages.request.AuthRequest;
+import core.messsages.request.FileTreeRequest;
 import core.messsages.response.AuthResponse;
+import core.messsages.response.FileTreeResponse;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ReplayingDecoder;
@@ -17,24 +21,27 @@ public class ZvvDecoder extends ReplayingDecoder<AbstractMessage> {
 
     protected void decode(ChannelHandlerContext ctx, ByteBuf byteBuf, List<Object> list) throws Exception {
         byte messageType = byteBuf.readByte();
+        int strLength = byteBuf.readInt();
+        String serStr = byteBuf.readCharSequence(strLength, StandardCharsets.UTF_8).toString();
         log.info("Получено сообщение в первом байте лежит {}", messageType);
         String requestName = (String) MessageTypes.TYPES.get(messageType);
         if (requestName != null) {
             switch(requestName) {
                 case("authRequest"):
-                    User user = new User();
-                    int loginLength = byteBuf.readInt();
-                    user.setLogin(byteBuf.readCharSequence(loginLength, StandardCharsets.UTF_8).toString());
-                    int pwdLength = byteBuf.readInt();
-                    user.setPwd(byteBuf.readCharSequence(pwdLength, StandardCharsets.UTF_8).toString());
-                    list.add(user);
+                    AuthRequest authRequest = Serializer.deserialize(serStr,AuthRequest.class);
+                    list.add(authRequest);
                     break;
                 case("authResponse"):
-                    int usernameLength = byteBuf.readInt();
-                    String username = byteBuf.readCharSequence(usernameLength, StandardCharsets.UTF_8).toString();
-                    boolean isAuthenticated = byteBuf.readBoolean();
-                    AuthResponse authResponse = new AuthResponse(username, isAuthenticated);
+                    AuthResponse authResponse = Serializer.deserialize(serStr,AuthResponse.class);
                     list.add(authResponse);
+                    break;
+                case("fileTreeRequest"):
+                    FileTreeRequest fileTreeRequest = Serializer.deserialize(serStr,FileTreeRequest.class);
+                    list.add(fileTreeRequest);
+                    break;
+                case("fileTreeResponse"):
+                    FileTreeResponse fileTreeResponse = Serializer.deserialize(serStr,FileTreeResponse.class);
+                    list.add(fileTreeResponse);
                     break;
                 default:
                     log.error("Неизвестный тип запроса!");

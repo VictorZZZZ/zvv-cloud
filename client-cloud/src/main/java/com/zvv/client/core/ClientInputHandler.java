@@ -3,6 +3,7 @@ package com.zvv.client.core;
 import com.zvv.client.gui.LoginController;
 import com.zvv.client.gui.MainController;
 import core.messsages.response.AuthResponse;
+import core.messsages.response.FileTreeResponse;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import javafx.application.Platform;
@@ -29,13 +30,13 @@ public class ClientInputHandler extends ChannelInboundHandlerAdapter {
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         if(msg instanceof AuthResponse){
             AuthResponse authResponse = (AuthResponse) msg;
-            log.info("Auth response {}",authResponse.isAuthenticated);
-            if(authResponse.isAuthenticated) {
+            log.info("Auth response {}",authResponse.isAuthenticated());
+            if(authResponse.isAuthenticated()) {
                 //показываем mainView
                 Platform.runLater(() -> {
                             try {
                                 Thread.sleep(100);
-                                loginController.showMainView(authResponse.getUsername());
+                                loginController.showMainView(authResponse.getUserName());
                             } catch (InterruptedException | IOException e) {
                                 e.printStackTrace();
                             }
@@ -52,8 +53,21 @@ public class ClientInputHandler extends ChannelInboundHandlerAdapter {
                         }
                     }
                 );
-
             }
+        } else if(msg instanceof FileTreeResponse){
+            log.warn("Получен fileTreeResponse");
+            FileTreeResponse fileTreeResponse = (FileTreeResponse) msg;
+            Platform.runLater(() -> {
+                        try {
+                            Thread.sleep(100);
+                            mainController.refreshTree(fileTreeResponse);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+            );
+        } else {
+            log.warn("Неизвестный объект");
         }
     }
 

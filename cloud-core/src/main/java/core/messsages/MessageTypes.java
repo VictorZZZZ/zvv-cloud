@@ -10,6 +10,8 @@ public class MessageTypes {
         {
             this.put((byte)1, "authRequest");
             this.put((byte)2, "authResponse");
+            this.put((byte)3, "fileTreeRequest");
+            this.put((byte)4, "fileTreeResponse");
         }
     };
 }

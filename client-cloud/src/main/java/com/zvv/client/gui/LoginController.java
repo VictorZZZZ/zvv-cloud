@@ -3,6 +3,7 @@ package com.zvv.client.gui;
 import com.zvv.client.core.NettyClient;
 import core.auth.User;
 import core.messsages.request.AuthRequest;
+import core.messsages.request.FileTreeRequest;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -21,6 +22,9 @@ public class LoginController {
     private static final String APPLICATION_NAME = "ZVV CLOUD";
     private static final String AUTEHENTICATION_FAILED = "Логин или пароль введены неверно.";
     private static final String MAIN_VIEW = "/mainView.xml";
+    private static User user;
+    @Setter
+    private MainController mainController;
     @Setter
     private Parent mainView;
     @Setter
@@ -50,7 +54,10 @@ public class LoginController {
     public void showMainView(String username) throws IOException {
         Stage stage =(Stage) btnLogin.getScene().getWindow();
         stage.setScene(new Scene(mainView, 600, 418));
-        stage.setTitle(APPLICATION_NAME + " " + username);
+        stage.setTitle(APPLICATION_NAME + " for User - " + username);
+        user = new User(username,"");
+        mainController.setUser(user);
+        nettyClient.send(new FileTreeRequest(user));
         stage.show();
     }
 
