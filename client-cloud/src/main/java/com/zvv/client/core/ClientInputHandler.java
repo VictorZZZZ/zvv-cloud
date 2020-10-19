@@ -61,6 +61,7 @@ public class ClientInputHandler extends ChannelInboundHandlerAdapter {
                         try {
                             Thread.sleep(100);
                             mainController.refreshTree(fileTreeResponse);
+                            mainController.updateStatus("Синхронизация дерева файлов выполнена.");
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }

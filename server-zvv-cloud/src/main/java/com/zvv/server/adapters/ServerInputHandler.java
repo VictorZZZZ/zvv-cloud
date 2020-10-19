@@ -5,6 +5,7 @@ import core.auth.User;
 import core.files.FileTree;
 import core.messsages.Serializer;
 import core.messsages.request.AuthRequest;
+import core.messsages.request.FileRequest;
 import core.messsages.request.FileTreeRequest;
 import core.messsages.response.AuthResponse;
 import core.messsages.response.FileTreeResponse;
@@ -42,6 +43,11 @@ public class ServerInputHandler extends ChannelInboundHandlerAdapter {
             FileTree fileTree = getFileTree(fileTreeRequest.getUser());
             FileTreeResponse fileTreeResponse = new FileTreeResponse(fileTree);
             ctx.writeAndFlush(fileTreeResponse);
+        } else if (msg instanceof FileRequest) {
+            log.info("Получен fileRequest");
+            FileRequest fileRequest = (FileRequest) msg;
+            FileTree fileTree = fileRequest.getFileTree();
+            log.info("Здесь будет отправка файла {}",fileTree);
         } else {
             log.info("Неизвестный объект");
         }
@@ -49,7 +55,7 @@ public class ServerInputHandler extends ChannelInboundHandlerAdapter {
 
     private FileTree getFileTree(User user) throws IOException {
         Path root = Paths.get(SERVER_STORAGE,user.getLogin());
-        FileTree fileTree = new FileTree("/",FileTree.DIR_TYPE,null);
+        FileTree fileTree = new FileTree("/",true,null);
         buildTree(root,fileTree);
         FileTreeResponse fileTreeResponse = new FileTreeResponse(fileTree);
         return fileTree;
@@ -58,7 +64,7 @@ public class ServerInputHandler extends ChannelInboundHandlerAdapter {
     private static void buildTree(Path path, FileTree fileTree) throws IOException {
         Files.walk(path,1).skip(1).forEach(p -> {
             if(Files.isDirectory(p)) {
-                FileTree newDir = new FileTree(p.getFileName().toString(), FileTree.DIR_TYPE, fileTree);
+                FileTree newDir = new FileTree(p.getFileName().toString(), true, fileTree);
                 fileTree.addChild(newDir);
                 try {
                     buildTree(p,newDir);//рекурсивно
@@ -66,7 +72,7 @@ public class ServerInputHandler extends ChannelInboundHandlerAdapter {
                     e.printStackTrace();
                 }
             } else {
-                fileTree.addChild(new FileTree(p.getFileName().toString(), FileTree.FILE_TYPE, fileTree));
+                fileTree.addChild(new FileTree(p.getFileName().toString(), false, fileTree));
             }
         });
     }

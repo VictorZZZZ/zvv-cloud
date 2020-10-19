@@ -5,6 +5,7 @@ import core.messsages.AbstractMessage;
 import core.messsages.MessageTypes;
 import core.messsages.Serializer;
 import core.messsages.request.AuthRequest;
+import core.messsages.request.FileRequest;
 import core.messsages.request.FileTreeRequest;
 import core.messsages.response.AuthResponse;
 import core.messsages.response.FileTreeResponse;
@@ -42,6 +43,11 @@ public class ZvvDecoder extends ReplayingDecoder<AbstractMessage> {
                 case("fileTreeResponse"):
                     FileTreeResponse fileTreeResponse = Serializer.deserialize(serStr,FileTreeResponse.class);
                     list.add(fileTreeResponse);
+                    break;
+                case("fileRequest"):
+                    log.info(serStr);
+                    FileRequest fileRequest = Serializer.deserialize(serStr,FileRequest.class);
+                    list.add(fileRequest);
                     break;
                 default:
                     log.error("Неизвестный тип запроса!");

@@ -32,6 +32,7 @@ public class ClientStarter extends Application {
 
         Thread t = new Thread(nettyClient);
         t.setDaemon(true);
+        t.setName("Netty Client");
         t.start();
     }
 

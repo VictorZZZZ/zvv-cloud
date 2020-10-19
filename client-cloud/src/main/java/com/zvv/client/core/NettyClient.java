@@ -22,9 +22,9 @@ public class NettyClient implements Runnable {
     private static final int PORT = 8189;
     private ChannelFuture channelFuture;
     @Getter
-    private static LoginController loginController;
+    private LoginController loginController;
     @Getter
-    private static MainController mainController;
+    private MainController mainController;
 
     public NettyClient(LoginController loginController, MainController mainController) {
         this.loginController = loginController;
@@ -70,5 +70,10 @@ public class NettyClient implements Runnable {
 
     public void stop() {
         channelFuture.channel().close();
+    }
+
+    public static void main(String[] args) {
+        Thread t1 = new Thread(new NettyClient(new LoginController(), new MainController()));
+        t1.start();
     }
 }

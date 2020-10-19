@@ -13,16 +13,13 @@ import java.util.Arrays;
 
 @Getter
 @Setter
+@NoArgsConstructor
 public class AuthRequest extends AbstractMessage {
+    private byte messageType=(byte) 1;
     private User user;
-
-    public AuthRequest() {
-        this.setMessageType((byte)1);
-    }
 
     public AuthRequest(User user) {
         this.user = user;
-        this.setMessageType((byte)1);
     }
 
     public static void main(String[] args) throws JsonProcessingException {

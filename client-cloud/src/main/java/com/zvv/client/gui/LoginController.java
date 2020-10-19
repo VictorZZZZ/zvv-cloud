@@ -21,7 +21,6 @@ import java.io.IOException;
 public class LoginController {
     private static final String APPLICATION_NAME = "ZVV CLOUD";
     private static final String AUTEHENTICATION_FAILED = "Логин или пароль введены неверно.";
-    private static final String MAIN_VIEW = "/mainView.xml";
     private static User user;
     @Setter
     private MainController mainController;

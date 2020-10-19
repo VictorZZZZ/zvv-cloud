@@ -1,12 +1,15 @@
 package core.coders;
 
 import core.auth.User;
+import core.files.FileTree;
 import core.messsages.AbstractMessage;
 import core.messsages.MessageTypes;
 import core.messsages.Serializer;
 import core.messsages.request.AuthRequest;
+import core.messsages.request.FileRequest;
 import core.messsages.request.FileTreeRequest;
 import core.messsages.response.AuthResponse;
+import core.messsages.response.FileResponse;
 import core.messsages.response.FileTreeResponse;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
@@ -55,6 +58,20 @@ public class ZvvEncoder extends MessageToByteEncoder<AbstractMessage> {
                     byteBuf.writeByte(fileTreeResponse.getMessageType());
                     Object[] objArr = Serializer.serialize(fileTreeResponse);
                     sendObjArray(byteBuf, objArr);
+                }
+                break;
+            case ("fileRequest"):
+                if(abstractMessage instanceof FileRequest){
+                    FileRequest fileRequest = (FileRequest) abstractMessage;
+                    byteBuf.writeByte(fileRequest.getMessageType());
+                    Object[] objArr = Serializer.serialize(fileRequest);
+                    log.info(Arrays.toString(objArr));
+                    sendObjArray(byteBuf, objArr);
+                }
+                break;
+            case ("fileResponse"):
+                if(abstractMessage instanceof FileResponse){
+                    log.info("Тут будет отправка файла");
                 }
                 break;
             default:

@@ -12,6 +12,8 @@ public class MessageTypes {
             this.put((byte)2, "authResponse");
             this.put((byte)3, "fileTreeRequest");
             this.put((byte)4, "fileTreeResponse");
+            this.put((byte)5, "fileRequest");
+            this.put((byte)6, "fileResponse");
         }
     };
 }
