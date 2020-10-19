@@ -46,8 +46,8 @@ public class ServerInputHandler extends ChannelInboundHandlerAdapter {
         } else if (msg instanceof FileRequest) {
             log.info("Получен fileRequest");
             FileRequest fileRequest = (FileRequest) msg;
-            FileTree fileTree = fileRequest.getFileTree();
-            log.info("Здесь будет отправка файла {}",fileTree);
+            FileTree fileTree = fileRequest.getReversedFileTree();
+            log.info("Здесь будет отправка файла {}",fileTree.toString());
         } else {
             log.info("Неизвестный объект");
         }
@@ -55,7 +55,7 @@ public class ServerInputHandler extends ChannelInboundHandlerAdapter {
 
     private FileTree getFileTree(User user) throws IOException {
         Path root = Paths.get(SERVER_STORAGE,user.getLogin());
-        FileTree fileTree = new FileTree("/",true,null);
+        FileTree fileTree = new FileTree(user.getLogin(),true,null);
         buildTree(root,fileTree);
         FileTreeResponse fileTreeResponse = new FileTreeResponse(fileTree);
         return fileTree;

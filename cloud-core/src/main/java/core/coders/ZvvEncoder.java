@@ -65,7 +65,6 @@ public class ZvvEncoder extends MessageToByteEncoder<AbstractMessage> {
                     FileRequest fileRequest = (FileRequest) abstractMessage;
                     byteBuf.writeByte(fileRequest.getMessageType());
                     Object[] objArr = Serializer.serialize(fileRequest);
-                    log.info(Arrays.toString(objArr));
                     sendObjArray(byteBuf, objArr);
                 }
                 break;

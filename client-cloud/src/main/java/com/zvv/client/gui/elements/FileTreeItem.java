@@ -15,7 +15,7 @@ public class FileTreeItem extends TreeItem<FileTreeItem> {
     public static final String DIR_TYPE = "dir";
     public static final String FILE_TYPE = "file";
     @Getter
-    private boolean dir=false;
+    private boolean dir = false;
 
     @Getter
     private String name;
@@ -45,17 +45,20 @@ public class FileTreeItem extends TreeItem<FileTreeItem> {
 
     /**
      * преобразует элемент в FileTree с полным деревом до корня.
-     * @return
+     *
+     * @param fileTreeItem
+     * @return FileTree
      */
-    public FileTree getFileTree() {
+    public FileTree getFileTree(TreeItem<FileTreeItem> treeItem) {
         FileTree fileTree = new FileTree();
-        TreeItem<FileTreeItem> fileTreeItem = this;
+        TreeItem<FileTreeItem> fileTreeItem = treeItem; //копируем treeItem
         while (fileTreeItem.getParent() != null) {
             FileTree parentFileTree = new FileTree();
             fileTree.setName(fileTreeItem.getValue().getName());
             TreeItem<FileTreeItem> parentItem = fileTreeItem.getParent();
             parentFileTree.setName(parentItem.getValue().getName());
             parentFileTree.addChild(fileTree);
+            fileTree.setParent(parentFileTree);
             fileTree = parentFileTree;
             fileTreeItem = parentItem;
         }

@@ -49,7 +49,7 @@ public class ClientContextMenu extends ContextMenu {
                 File file = fileChooser.showSaveDialog(((Node) cell).getScene().getWindow());//Указываем текущую сцену CodeNote.mainStage
                 if (file != null) {
                     //Save
-                    FileTree fileTree = fileTreeItem.getValue().getFileTree();
+                    FileTree fileTree = fileTreeItem.getValue().getFileTree(fileTreeItem);
                     FileRequest fileRequest = new FileRequest(fileTree);
                     nettyClient.send(fileRequest);
                 }
