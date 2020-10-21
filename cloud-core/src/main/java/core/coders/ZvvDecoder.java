@@ -1,6 +1,5 @@
 package core.coders;
 
-import core.auth.User;
 import core.messsages.AbstractMessage;
 import core.messsages.MessageTypes;
 import core.messsages.Serializer;
@@ -49,6 +48,9 @@ public class ZvvDecoder extends ReplayingDecoder<AbstractMessage> {
                     FileRequest fileRequest = Serializer.deserialize(serStr,FileRequest.class);
                     list.add(fileRequest);
                     break;
+                case("fileResponse"):
+                    log.info(serStr);
+                    //FileResponse fileResponse =
                 default:
                     log.error("Неизвестный тип запроса!");
             }

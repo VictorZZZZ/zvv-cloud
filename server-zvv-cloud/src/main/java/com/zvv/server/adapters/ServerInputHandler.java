@@ -3,11 +3,11 @@ package com.zvv.server.adapters;
 import com.zvv.database.DatabaseCore;
 import core.auth.User;
 import core.files.FileTree;
-import core.messsages.Serializer;
 import core.messsages.request.AuthRequest;
 import core.messsages.request.FileRequest;
 import core.messsages.request.FileTreeRequest;
 import core.messsages.response.AuthResponse;
+import core.messsages.response.FileResponse;
 import core.messsages.response.FileTreeResponse;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
@@ -17,7 +17,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
 
 @Log4j2
 public class ServerInputHandler extends ChannelInboundHandlerAdapter {
@@ -47,27 +46,40 @@ public class ServerInputHandler extends ChannelInboundHandlerAdapter {
             log.info("Получен fileRequest");
             FileRequest fileRequest = (FileRequest) msg;
             FileTree fileTree = fileRequest.getReversedFileTree();
-            log.info("Здесь будет отправка файла {}",fileTree.toString());
+            log.info("Отправка файла {}", fileTree.toString());
+            Path path = Paths.get(SERVER_STORAGE, fileTree.toString());
+            FileResponse fileResponse = new FileResponse(path);
+            while (!fileResponse.isFileEnded()){
+                fileResponse.readNextPortion();
+                ctx.writeAndFlush(fileResponse);
+            }
         } else {
             log.info("Неизвестный объект");
         }
     }
 
+    /**
+     * Генерирует FileTree для папки user
+     *
+     * @param user
+     * @return FileTree
+     * @throws IOException
+     */
     private FileTree getFileTree(User user) throws IOException {
-        Path root = Paths.get(SERVER_STORAGE,user.getLogin());
-        FileTree fileTree = new FileTree(user.getLogin(),true,null);
-        buildTree(root,fileTree);
+        Path root = Paths.get(SERVER_STORAGE, user.getLogin());
+        FileTree fileTree = new FileTree(user.getLogin(), true, null);
+        buildTree(root, fileTree);
         FileTreeResponse fileTreeResponse = new FileTreeResponse(fileTree);
         return fileTree;
     }
 
     private static void buildTree(Path path, FileTree fileTree) throws IOException {
-        Files.walk(path,1).skip(1).forEach(p -> {
-            if(Files.isDirectory(p)) {
+        Files.walk(path, 1).skip(1).forEach(p -> {
+            if (Files.isDirectory(p)) {
                 FileTree newDir = new FileTree(p.getFileName().toString(), true, fileTree);
                 fileTree.addChild(newDir);
                 try {
-                    buildTree(p,newDir);//рекурсивно
+                    buildTree(p, newDir);//рекурсивно
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

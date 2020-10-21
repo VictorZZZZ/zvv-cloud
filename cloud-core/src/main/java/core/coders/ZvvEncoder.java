@@ -71,6 +71,10 @@ public class ZvvEncoder extends MessageToByteEncoder<AbstractMessage> {
             case ("fileResponse"):
                 if(abstractMessage instanceof FileResponse){
                     log.info("Тут будет отправка файла");
+                    FileResponse fileResponse = (FileResponse) abstractMessage;
+                    byteBuf.writeByte(fileResponse.getMessageType());
+                    Object[] objArr = Serializer.serialize(fileResponse);
+                    sendObjArray(byteBuf, objArr);
                 }
                 break;
             default:
