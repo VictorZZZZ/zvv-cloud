@@ -14,6 +14,8 @@ public class MessageTypes {
             this.put((byte)4, "fileTreeResponse");
             this.put((byte)5, "fileRequest");
             this.put((byte)6, "fileResponse");
+            this.put((byte)7, "newFolderRequest");
+            this.put((byte)8, "deleteRequest");
         }
     };
 }

@@ -43,7 +43,7 @@ public class ClientStarter extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
         primaryStage.setTitle("ZVV Cloud Client");
-        primaryStage.setScene(new Scene(loginView, 300, 275));
+        primaryStage.setScene(new Scene(loginView, 300, 300));
         primaryStage.setOnCloseRequest(event -> {
             nettyClient.stop();
         });

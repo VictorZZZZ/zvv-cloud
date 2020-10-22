@@ -3,10 +3,9 @@ package core.coders;
 import core.messsages.AbstractMessage;
 import core.messsages.MessageTypes;
 import core.messsages.Serializer;
-import core.messsages.request.AuthRequest;
-import core.messsages.request.FileRequest;
-import core.messsages.request.FileTreeRequest;
+import core.messsages.request.*;
 import core.messsages.response.AuthResponse;
+import core.messsages.response.FileResponse;
 import core.messsages.response.FileTreeResponse;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
@@ -24,7 +23,7 @@ public class ZvvDecoder extends ReplayingDecoder<AbstractMessage> {
         int strLength = byteBuf.readInt();
         String serStr = byteBuf.readCharSequence(strLength, StandardCharsets.UTF_8).toString();
         log.info("Получено сообщение в первом байте лежит {}", messageType);
-        String requestName = (String) MessageTypes.TYPES.get(messageType);
+        String requestName = MessageTypes.TYPES.get(messageType);
         if (requestName != null) {
             switch(requestName) {
                 case("authRequest"):
@@ -49,8 +48,18 @@ public class ZvvDecoder extends ReplayingDecoder<AbstractMessage> {
                     list.add(fileRequest);
                     break;
                 case("fileResponse"):
-                    log.info(serStr);
-                    //FileResponse fileResponse =
+                    //log.info(serStr);
+                    FileResponse fileResponse = Serializer.deserialize(serStr, FileResponse.class);
+                    list.add(fileResponse);
+                    break;
+                case("newFolderRequest"):
+                    NewFolderRequest newFolderRequest = Serializer.deserialize(serStr,NewFolderRequest.class);
+                    list.add(newFolderRequest);
+                    break;
+                case("deleteRequest"):
+                    DeleteRequest deleteRequest = Serializer.deserialize(serStr,DeleteRequest.class);
+                    list.add(deleteRequest);
+                    break;
                 default:
                     log.error("Неизвестный тип запроса!");
             }

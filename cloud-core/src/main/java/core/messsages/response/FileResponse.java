@@ -2,20 +2,20 @@ package core.messsages.response;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import core.messsages.AbstractMessage;
+import io.netty.channel.DefaultFileRegion;
+import io.netty.channel.FileRegion;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.extern.log4j.Log4j2;
+import org.apache.commons.codec.digest.DigestUtils;
 
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 
 @NoArgsConstructor
@@ -23,7 +23,7 @@ import java.nio.file.StandardOpenOption;
 @Setter
 @Log4j2
 public class FileResponse extends AbstractMessage {
-    public static final int PORTION = 256;
+    public static final int PORTION = 51200; //50kB
     private byte messageType = (byte) 6;
 
     private Path path;
@@ -46,6 +46,8 @@ public class FileResponse extends AbstractMessage {
     @JsonIgnore
     private RandomAccessFile src;
 
+    private String md5;
+
 
     public FileResponse(Path path) throws IOException {
         this.path = path;
@@ -59,6 +61,7 @@ public class FileResponse extends AbstractMessage {
         } else {
             data = new byte[PORTION];
         }
+        md5 = DigestUtils.md5Hex(Files.newInputStream(path));
     }
 
     public void readNextPortion() {
@@ -88,6 +91,11 @@ public class FileResponse extends AbstractMessage {
 
     public void write() throws IOException {
         Files.write(path, data, StandardOpenOption.APPEND);
+    }
+
+    @JsonIgnore
+    public boolean isMd5Ok() throws IOException {
+        return md5.equals(DigestUtils.md5Hex(Files.newInputStream(path)));
     }
 
 }

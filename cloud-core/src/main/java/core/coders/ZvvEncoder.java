@@ -5,9 +5,7 @@ import core.files.FileTree;
 import core.messsages.AbstractMessage;
 import core.messsages.MessageTypes;
 import core.messsages.Serializer;
-import core.messsages.request.AuthRequest;
-import core.messsages.request.FileRequest;
-import core.messsages.request.FileTreeRequest;
+import core.messsages.request.*;
 import core.messsages.response.AuthResponse;
 import core.messsages.response.FileResponse;
 import core.messsages.response.FileTreeResponse;
@@ -26,7 +24,7 @@ public class ZvvEncoder extends MessageToByteEncoder<AbstractMessage> {
     protected void encode(ChannelHandlerContext channelHandlerContext, AbstractMessage abstractMessage, ByteBuf byteBuf) throws Exception {
         byte messageType = abstractMessage.getMessageType();
         String requestType = MessageTypes.TYPES.get(messageType);
-        log.info("Получен запрос на обработку {}",requestType);
+        //log.info("Получен запрос на обработку {}",requestType);
         switch(requestType) {
             case ("authRequest"):
                 if (abstractMessage instanceof AuthRequest) {
@@ -70,10 +68,26 @@ public class ZvvEncoder extends MessageToByteEncoder<AbstractMessage> {
                 break;
             case ("fileResponse"):
                 if(abstractMessage instanceof FileResponse){
-                    log.info("Тут будет отправка файла");
+                    System.out.print(".");
                     FileResponse fileResponse = (FileResponse) abstractMessage;
                     byteBuf.writeByte(fileResponse.getMessageType());
                     Object[] objArr = Serializer.serialize(fileResponse);
+                    sendObjArray(byteBuf, objArr);
+                }
+                break;
+            case("newFolderRequest"):
+                if(abstractMessage instanceof NewFolderRequest){
+                    NewFolderRequest newFolderRequest = (NewFolderRequest) abstractMessage;
+                    byteBuf.writeByte(newFolderRequest.getMessageType());
+                    Object[] objArr = Serializer.serialize(newFolderRequest);
+                    sendObjArray(byteBuf, objArr);
+                }
+                break;
+            case("deleteRequest"):
+                if(abstractMessage instanceof DeleteRequest){
+                    DeleteRequest deleteRequest = (DeleteRequest) abstractMessage;
+                    byteBuf.writeByte(deleteRequest.getMessageType());
+                    Object[] objArr = Serializer.serialize(deleteRequest);
                     sendObjArray(byteBuf, objArr);
                 }
                 break;

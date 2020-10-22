@@ -13,6 +13,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 import lombok.Setter;
 
@@ -64,4 +65,7 @@ public class LoginController {
         lblError.setText(AUTEHENTICATION_FAILED);
     }
 
+    public void signUpAction(MouseEvent mouseEvent) {
+        lblError.setText("Регистрация пока недоступна");
+    }
 }

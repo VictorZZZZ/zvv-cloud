@@ -1,7 +1,6 @@
 package core.messsages.request;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import core.auth.User;
 import core.files.FileTree;
 import core.messsages.AbstractMessage;
 import lombok.Getter;
@@ -11,13 +10,14 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
-public class FileRequest extends AbstractMessage {
-    private byte messageType = (byte) 5;
-    @JsonProperty
+public class NewFolderRequest extends AbstractMessage {
+    private byte messageType=(byte) 7;
+
+    private User user;
     private FileTree fileTree;
 
-    public FileRequest(FileTree fileTree) {
+    public NewFolderRequest(FileTree fileTree,User user) {
         this.fileTree = fileTree;
+        this.user = user;
     }
-
 }

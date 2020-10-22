@@ -3,9 +3,7 @@ package com.zvv.server.adapters;
 import com.zvv.database.DatabaseCore;
 import core.auth.User;
 import core.files.FileTree;
-import core.messsages.request.AuthRequest;
-import core.messsages.request.FileRequest;
-import core.messsages.request.FileTreeRequest;
+import core.messsages.request.*;
 import core.messsages.response.AuthResponse;
 import core.messsages.response.FileResponse;
 import core.messsages.response.FileTreeResponse;
@@ -13,6 +11,7 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import lombok.extern.log4j.Log4j2;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -39,20 +38,32 @@ public class ServerInputHandler extends ChannelInboundHandlerAdapter {
         } else if (msg instanceof FileTreeRequest) {
             log.info("Получен fileTreeRequest");
             FileTreeRequest fileTreeRequest = (FileTreeRequest) msg;
-            FileTree fileTree = getFileTree(fileTreeRequest.getUser());
-            FileTreeResponse fileTreeResponse = new FileTreeResponse(fileTree);
-            ctx.writeAndFlush(fileTreeResponse);
+            sendFileTree(getFileTree(fileTreeRequest.getUser()),ctx);
         } else if (msg instanceof FileRequest) {
             log.info("Получен fileRequest");
             FileRequest fileRequest = (FileRequest) msg;
-            FileTree fileTree = fileRequest.getReversedFileTree();
+            FileTree fileTree = fileRequest.getFileTree().getReversed();
             log.info("Отправка файла {}", fileTree.toString());
             Path path = Paths.get(SERVER_STORAGE, fileTree.toString());
             FileResponse fileResponse = new FileResponse(path);
-            while (!fileResponse.isFileEnded()){
+            while (!fileResponse.isFileEnded()) {
                 fileResponse.readNextPortion();
                 ctx.writeAndFlush(fileResponse);
             }
+        } else if (msg instanceof NewFolderRequest) {
+            NewFolderRequest newFolderRequest = (NewFolderRequest) msg;
+            FileTree fileTree = newFolderRequest.getFileTree();
+            File newDir = new File(SERVER_STORAGE,fileTree.getReversed().toString());
+            newDir.mkdir();
+            log.info("Создана папка {}",newDir.getAbsolutePath().toString());
+            sendFileTree( getFileTree(newFolderRequest.getUser()), ctx);
+        } else if (msg instanceof DeleteRequest) {
+            DeleteRequest deleteRequest = (DeleteRequest) msg;
+            FileTree fileTree = deleteRequest.getFileTree();
+            File deleteFile = new File(SERVER_STORAGE,fileTree.getReversed().toString());
+            deleteFile.delete();
+            log.info("Удален файл {}",deleteFile.getAbsolutePath().toString());
+            sendFileTree( getFileTree(deleteRequest.getUser()), ctx);
         } else {
             log.info("Неизвестный объект");
         }
@@ -71,6 +82,11 @@ public class ServerInputHandler extends ChannelInboundHandlerAdapter {
         buildTree(root, fileTree);
         FileTreeResponse fileTreeResponse = new FileTreeResponse(fileTree);
         return fileTree;
+    }
+
+    private void sendFileTree(FileTree fileTree, ChannelHandlerContext ctx) {
+        FileTreeResponse fileTreeResponse = new FileTreeResponse(fileTree);
+        ctx.writeAndFlush(fileTreeResponse);
     }
 
     private static void buildTree(Path path, FileTree fileTree) throws IOException {

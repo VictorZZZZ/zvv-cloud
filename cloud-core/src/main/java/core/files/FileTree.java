@@ -47,4 +47,22 @@ public class FileTree {
         }
         return sb.toString();
     }
+
+    /**
+     * После десериализации file tree позиционируется на корневой каталог. А в данном случае нам нужен конечный файл,
+     * который мы будем передавать. Также при десериализации в каждом элементе заполняется только поле children,
+     * а parent нет. Поэтому здесь при прохождении всех children присваиваем им parent.
+     * @return
+     */
+    @JsonIgnore
+    public FileTree getReversed() {
+        FileTree lastFileTree;
+        FileTree result = this;
+        while(!result.getChildren().isEmpty()){
+            lastFileTree = result.getChildren().get(0);
+            lastFileTree.setParent(result);
+            result = lastFileTree;
+        }
+        return result;
+    }
 }

@@ -29,6 +29,7 @@ public class FileResponseTest {
         while (!fileResponse.isFileEnded()) {
             fileResponse.readNextPortion();
             Object[] obj = Serializer.serialize(fileResponse);
+
             FileResponse fileResponseReceived = Serializer.deserialize((String) obj[1], FileResponse.class);
             fileResponseReceived.setPath(newFile.toPath());
             fileResponseReceived.write();
