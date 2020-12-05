@@ -1,2 +1,9 @@
 /.idea/*
 *.iml
+/client-zvv-cloud/target/
+/logs/
+/cloud-core/target/classes/core/
+/client-cloud/target/classes/META-INF/
+*.class
+/client-cloud/target/classes/
+/cloud-core/target/classes/META-INF/
